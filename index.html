@@ -1,0 +1,192 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="PromptFlow AI Studio — design, configure, and export AI prompt workflows with live JSON previews.">
+  <title>PromptFlow AI Studio | Workflow Builder</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <a class="brand" href="#" aria-label="PromptFlow home">
+        <span class="brand-icon">✳</span>
+        <span>PromptFlow<span class="brand-light"> AI</span></span>
+      </a>
+
+      <p class="nav-label">WORKSPACE</p>
+      <button class="nav-item active" type="button">
+        <span>⌘</span> Workflow Builder
+      </button>
+      <button class="nav-item" id="templatesNav" type="button">
+        <span>▤</span> Prompt Templates
+      </button>
+
+      <p class="nav-label">YOUR WORKSPACE</p>
+      <div class="workspace-card">
+        <span class="workspace-dot"></span>
+        <div>
+          <strong>Personal Workspace</strong>
+          <small>Local development</small>
+        </div>
+      </div>
+
+      <div class="sidebar-bottom">
+        <div class="status-line"><span class="status-dot"></span> Local environment</div>
+        <p>PromptFlow AI Studio</p>
+        <small>Frontend prototype · v1.0</small>
+      </div>
+    </aside>
+
+    <main class="main-area">
+      <header class="topbar">
+        <div>
+          <div class="breadcrumb">Workspace <span>/</span> Workflow Builder</div>
+          <h1>AI Workflow Builder</h1>
+        </div>
+        <div class="top-actions">
+          <span class="local-badge"><span></span> Local project</span>
+          <button class="button button-secondary" id="resetBtn" type="button">Reset</button>
+          <button class="button button-primary" id="saveBtn" type="button">Save workflow</button>
+        </div>
+      </header>
+
+      <section class="intro">
+        <div>
+          <p class="eyebrow">DESIGN · CONFIGURE · EXPORT</p>
+          <h2>Build your next AI workflow.</h2>
+          <p class="muted">Connect clear instructions into a reusable prompt pipeline.</p>
+        </div>
+        <div class="intro-symbol" aria-hidden="true">✳</div>
+      </section>
+
+      <section class="template-section" id="templatesSection">
+        <div class="section-heading">
+          <div>
+            <h2>Start with a template</h2>
+            <p class="muted">Choose a starting point or create your own workflow.</p>
+          </div>
+        </div>
+        <div class="template-grid">
+          <button class="template-card" type="button" data-template="summarizer">
+            <span class="template-icon purple">▤</span>
+            <strong>Document Summarizer</strong>
+            <span>Turn long documents into useful summaries.</span>
+            <small>2 workflow steps ↗</small>
+          </button>
+          <button class="template-card" type="button" data-template="classifier">
+            <span class="template-icon blue">◎</span>
+            <strong>Email Classifier</strong>
+            <span>Organize incoming emails by category.</span>
+            <small>2 workflow steps ↗</small>
+          </button>
+          <button class="template-card" type="button" data-template="extractor">
+            <span class="template-icon amber">{ }</span>
+            <strong>Data Extractor</strong>
+            <span>Structure unorganized text into JSON.</span>
+            <small>2 workflow steps ↗</small>
+          </button>
+        </div>
+      </section>
+
+      <section class="builder-layout">
+        <div class="panel workflow-panel">
+          <div class="panel-header">
+            <div>
+              <p class="eyebrow">WORKFLOW DESIGNER</p>
+              <h2>Workflow steps</h2>
+            </div>
+            <span class="count-badge" id="stepCount">2 steps</span>
+          </div>
+
+          <label class="field-label" for="workflowName">Workflow name</label>
+          <input id="workflowName" class="text-input" value="Customer Support Assistant" maxlength="80">
+
+          <div class="steps-list" id="stepsList" aria-live="polite"></div>
+
+          <button class="add-step-button" id="addStepBtn" type="button">
+            <span>＋</span> Add workflow step
+          </button>
+
+          <div class="workflow-footer">
+            <span><span class="status-dot"></span> Draft configuration</span>
+            <button class="text-button" id="exportBtn" type="button">Export JSON ↓</button>
+          </div>
+        </div>
+
+        <div class="panel editor-panel">
+          <div class="panel-header">
+            <div>
+              <p class="eyebrow">STEP CONFIGURATION</p>
+              <h2 id="editorHeading">Configure your step</h2>
+            </div>
+            <span class="editor-icon">✎</span>
+          </div>
+
+          <div id="emptyEditor" class="empty-state" hidden>
+            <span>✳</span>
+            <h3>No step selected</h3>
+            <p>Add a workflow step to begin configuring your prompt.</p>
+          </div>
+
+          <div id="stepEditor">
+            <label class="field-label" for="stepName">Step name</label>
+            <input id="stepName" class="text-input" maxlength="80">
+
+            <label class="field-label" for="stepType">Task type</label>
+            <select id="stepType" class="text-input">
+              <option value="text_generation">Text generation</option>
+              <option value="classification">Classification</option>
+              <option value="data_extraction">Data extraction</option>
+              <option value="summarization">Summarization</option>
+              <option value="validation">Validation</option>
+            </select>
+
+            <label class="field-label" for="systemPrompt">System instructions</label>
+            <textarea id="systemPrompt" class="text-input prompt-area" rows="4" maxlength="5000"></textarea>
+            <p class="field-hint">Define the role, rules, and expected behavior.</p>
+
+            <label class="field-label" for="userPrompt">User prompt / input template</label>
+            <textarea id="userPrompt" class="text-input prompt-area" rows="5" maxlength="5000"></textarea>
+            <p class="field-hint">Use {{input}} as a placeholder for incoming text.</p>
+
+            <div class="editor-bottom">
+              <span class="field-hint">Changes update the JSON preview automatically.</span>
+              <button class="button button-danger" id="deleteStepBtn" type="button">Delete step</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel preview-panel">
+        <div class="panel-header preview-header">
+          <div>
+            <p class="eyebrow">LIVE OUTPUT</p>
+            <h2>JSON workflow preview</h2>
+            <p class="muted">A structured representation of your current configuration.</p>
+          </div>
+          <div class="preview-actions">
+            <span class="json-badge">JSON</span>
+            <button class="button button-secondary" id="copyJsonBtn" type="button">Copy JSON</button>
+          </div>
+        </div>
+        <pre class="json-output"><code id="jsonPreview"></code></pre>
+        <div class="preview-footer">
+          <span><span class="status-dot"></span> Valid JSON generated in your browser</span>
+          <span id="jsonSize">0 bytes</span>
+        </div>
+      </section>
+
+      <footer class="page-footer">
+        <span>PromptFlow AI Studio</span>
+        <span>Built with HTML, CSS &amp; JavaScript</span>
+      </footer>
+    </main>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>
